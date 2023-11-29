@@ -2,5 +2,4 @@
 
 from .address import Address
 from .service import Service
-#from .user import User 
-#TODO add user model for auth
+from .user import User 
