@@ -50,6 +50,28 @@ TelecomTalesAPI is a RESTful API developed using Flask for managing telecom serv
    ```bash
    snap install postman
 
+## Scripts
+
+6. **To use scripts install requests library**
+   ```bash
+   pip install requests
+
+## Navigate to script folder and run script 
+
+6. **To use script run paython script_name.py**
+   ```bash
+   python create_user_script.py
+   python create_address_script.py
+   python create_service_script.py
+   python delete_address_script.py
+   python delete_service_script.py
+   python get_address_script.py
+   python get_service_script.py
+   python link_service_to_address_script.py
+   python query_addresses_script.py
+   python update_address_script.py
+   python update_service_script.py
+
 ## Docker Implementation
 
 ### TODO

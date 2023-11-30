@@ -1,4 +1,5 @@
 from telecomtalesapi import db
+from .service import address_service  # Import the associative table
 
 class Address(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -7,7 +8,10 @@ class Address(db.Model):
     city = db.Column(db.String(100))
     post = db.Column(db.String(100))
     postNo = db.Column(db.Integer)
-    services = db.relationship('Service', backref='address', lazy='dynamic')
+    
+    # Many-to-many relationship with Service
+    services = db.relationship('Service', secondary=address_service, lazy='subquery',
+                               backref=db.backref('addresses', lazy=True))
 
     def to_dict(self):
         return {
@@ -17,5 +21,6 @@ class Address(db.Model):
             'city': self.city,
             'post': self.post,
             'postNo': self.postNo,
-            'services': [service.to_dict() for service in self.services]
+            'services': [{'id': service.id, 'service_name': service.service, 'value': service.value, 'description': service.description} 
+                         for service in self.services]
         }

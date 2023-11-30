@@ -62,3 +62,15 @@ def query_addresses():
 
 def is_request_xml():
     return 'xml' in request.headers.get('Content-Type', '').lower()
+
+# List All Services for a Specific Address
+
+@app.route('/addresses/<int:address_id>/services', methods=['GET'])
+@auth.login_required
+def get_services_for_address(address_id):
+    address = Address.query.get(address_id)
+    if not address:
+        return jsonify({'message': 'Address not found'}), 404
+
+    services = address.services
+    return jsonify([service.to_dict() for service in services])
