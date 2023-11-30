@@ -8,8 +8,7 @@ import xmltodict
 def is_request_xml():
     return 'xml' in request.headers.get('Content-Type', '').lower()
 
-# Create Address Route
-
+# Route to create a new address
 @app.route('/addresses', methods=['POST'])
 @auth.login_required
 def create_address():
@@ -28,31 +27,32 @@ def create_address():
     ).first()
 
     if existing_address:
-        return Response(xmltodict.unparse({'message': 'Address with these details already exists'}), mimetype='application/xml', status=400) if is_request_xml() else jsonify({'message': 'Address with these details already exists'}), 400
+        response_message = {'message': 'Address with these details already exists'}
+        return Response(xmltodict.unparse(response_message), mimetype='application/xml', status=400) if is_request_xml() else jsonify(response_message), 400
 
     address = Address(**data)
     db.session.add(address)
     db.session.commit()
     return Response(xmltodict.unparse({'address': address.to_dict()}), mimetype='application/xml', status=201) if is_request_xml() else jsonify(address.to_dict()), 201
 
-# Get Address by ID Route
-
+# Route to get an address by its ID
 @app.route('/addresses/<int:id>', methods=['GET'])
 @auth.login_required
 def get_address(id):
     address = Address.query.get(id)
     if not address:
-        return Response(xmltodict.unparse({'message': 'Address not found'}), mimetype='application/xml', status=404) if is_request_xml() else jsonify({'message': 'Address not found'}), 404
+        response_message = {'message': 'Address not found'}
+        return Response(xmltodict.unparse(response_message), mimetype='application/xml', status=404) if is_request_xml() else jsonify(response_message), 404
     return Response(xmltodict.unparse({'address': address.to_dict()}), mimetype='application/xml') if is_request_xml() else jsonify(address.to_dict())
 
-# Update Address Route
-
+# Route to update an existing address
 @app.route('/addresses/<int:id>', methods=['PUT'])
 @auth.login_required
 def update_address(id):
     address = Address.query.get(id)
     if not address:
-        return Response(xmltodict.unparse({'message': 'Address not found'}), mimetype='application/xml', status=404) if is_request_xml() else jsonify({'message': 'Address not found'}), 404
+        response_message = {'message': 'Address not found'}
+        return Response(xmltodict.unparse(response_message), mimetype='application/xml', status=404) if is_request_xml() else jsonify(response_message), 404
 
     data = xmltodict.parse(request.data)['address'] if is_request_xml() else request.json
     for key, value in data.items():
@@ -60,20 +60,19 @@ def update_address(id):
     db.session.commit()
     return Response(xmltodict.unparse({'address': address.to_dict()}), mimetype='application/xml') if is_request_xml() else jsonify(address.to_dict())
 
-# Delete Address Route
-
+# Route to delete an existing address
 @app.route('/addresses/<int:id>', methods=['DELETE'])
 @auth.login_required
 def delete_address(id):
     address = Address.query.get(id)
     if not address:
-        return Response(xmltodict.unparse({'message': 'Address not found'}), mimetype='application/xml', status=404) if is_request_xml() else jsonify({'message': 'Address not found'}), 404
+        response_message = {'message': 'Address not found'}
+        return Response(xmltodict.unparse(response_message), mimetype='application/xml', status=404) if is_request_xml() else jsonify(response_message), 404
     db.session.delete(address)
     db.session.commit()
     return '', 204
 
-# Query Addresses Route 
-
+# Route to query addresses based on certain criteria like city or post number
 @app.route('/addresses/query', methods=['GET'])
 @auth.login_required
 def query_addresses():
@@ -87,19 +86,18 @@ def query_addresses():
     addresses = query.all()
     return Response(xmltodict.unparse({'addresses': [address.to_dict() for address in addresses]}), mimetype='application/xml') if is_request_xml() else jsonify([address.to_dict() for address in addresses])
 
-# List Services for an Address Route
-
+# Route to list services for a specific address
 @app.route('/addresses/<int:address_id>/services', methods=['GET'])
 @auth.login_required
 def get_services_for_address(address_id):
     address = Address.query.get(address_id)
     if not address:
-        return Response(xmltodict.unparse({'message': 'Address not found'}), mimetype='application/xml', status=404) if is_request_xml() else jsonify({'message': 'Address not found'}), 404
-    services = address.services
+        response_message = {'message': 'Address not found'}
+        return Response(xmltodict.unparse(response_message), mimetype='application/xml', status=404) if is_request_xml() else jsonify(response_message), 404
+    services = address.services.all()
     return Response(xmltodict.unparse({'services': [service.to_dict() for service in services]}), mimetype='application/xml') if is_request_xml() else jsonify([service.to_dict() for service in services])
 
-# List All Addresses Route
-
+# Route to list all addresses
 @app.route('/addresses', methods=['GET'])
 @auth.login_required
 def get_all_addresses():

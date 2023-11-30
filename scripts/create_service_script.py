@@ -17,7 +17,8 @@ if __name__ == "__main__":
     service_data = {
         'service': input("Service Name: "),
         'value': input("Value (True/False): ").lower() == 'true',
-        'comment': input("Comment: ")
+        'comment': input("Comment: "),
+        'address_id': int(input("Address ID: "))  # Asking for the address ID
     }
 
     # Prompt the user for the username and password inputs

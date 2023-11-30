@@ -44,6 +44,11 @@ TelecomTalesAPI is a RESTful API developed using Flask for managing telecom serv
    flask db migrate -m "Initial migration."
    flask db upgrade
 
+### Starting the Application:
+5. **to start the application, run:**
+   ```bash
+   python run.py
+
 ## API Testing Tool
 
 5. **Postman**
