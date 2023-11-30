@@ -1,77 +1,55 @@
 # TelecomTalesAPI
-RESTful API for managing telecom services using Flask. 
-Features CRUD operations for Address and Service entities, supports both JSON and XML data formats, and includes basic authentication and SQLite database integration. 
-Designed as a lightweight solution for simulating telecommunication operator services.
+
+## Introduction
+TelecomTalesAPI is a RESTful API developed using Flask for managing telecom services. It's designed as a lightweight solution for simulating telecommunication operator services.
+
+## Features
+- CRUD operations for Address and Service entities.
+- Support for both JSON and XML data formats.
+- Basic authentication.
+- SQLite database integration.
+
+## Setup Instructions
+
+### Prerequisites
+- Python 3
+- pip (Python package installer)
+
+### Installing Dependencies
+
+1. **pip Installation**
+   ```bash
+   sudo apt install python3-pip
+
+2. **Flask and Related Libraries**
+   ```bash
+   pip install Flask Flask-RESTful Flask-SQLAlchemy flask-httpauth Flask-Migrate
+
+3. **Werkzeug Library**
+   ```bash
+   pip install Werkzeug
+
+## Using Using requirements.txt
+
+0. **To install all dependencies at once:**
+   ```bash
+   pip install -r requirements.txt
 
 
+### Set up the database:
+4. **Set up the database:**
+   ```bash
+   export FLASK_APP=run.py
+   flask db init
+   flask db migrate -m "Initial migration."
+   flask db upgrade
 
-setup steps
+## API Testing Tool
 
-Installing pip
-command:
-sudo apt install python3-pip
+5. **Postman**
+   ```bash
+   snap install postman
 
+## Docker Implementation
 
-Installing flask
-command:
-pip install Flask
-pip install Flask-RESTful
-pip install Flask-SQLAlchemy
-pip install flask flask-httpauth 
-pip install Flask-Migrate
-
-Werkzeug library install
-command:
-
-pip install Werkzeug
-
-
-
-Integrating a Database
-
-To integrate a database into Flask application, we use Flask-SQLAlchemy
-command:
-pip install Flask-SQLAlchemy
-
-Api Testing Tool 
-Postman 
-
-command:
-snap install postman
-
-Once models are created we use them to setup the database.
-
-Install Flask-Migrate
-command:
-pip install Flask-Migrate
-
-
-
-------------------------------------------------
-Integrated requirements inside requirements.txt
-------------------------------------------------
-
-to install them run:
-
-pip install -r requirements.txt
-
-
-
--------------
-
-
-To setup the database based on the models run this commands in root of the project:
-
-export FLASK_APP=run.py
-flask db init
-flask db migrate -m "Initial migration."
-flask db upgrade
-
-be sure that "migrations" folder is empty prior to running this commands 
-
-
-Docker implementation
-
-------
-
-TODO
+### TODO
