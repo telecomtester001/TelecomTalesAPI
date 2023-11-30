@@ -21,6 +21,6 @@ class Address(db.Model):
             'city': self.city,
             'post': self.post,
             'postNo': self.postNo,
-            'services': [{'id': service.id, 'service_name': service.service, 'value': service.value, 'description': service.description} 
+            'services': [{'id': service.id, 'service_name': service.service, 'value': service.value, 'comment': service.comment} 
                          for service in self.services]
         }
