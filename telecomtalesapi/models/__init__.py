@@ -1,4 +1,4 @@
-# Imports models for easy access
+# Imports models
 
 from .address import Address
 from .service import Service

@@ -1,6 +1,7 @@
 
 from flask import request, jsonify, Response
-from telecomtalesapi import app, db, auth
+from telecomtalesapi import app, db
+from telecomtalesapi.auth import auth
 from telecomtalesapi.models.address import Address
 import xmltodict
 
