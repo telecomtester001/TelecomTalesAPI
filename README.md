@@ -57,7 +57,7 @@ TelecomTalesAPI is a RESTful API developed using Flask for managing telecom serv
    pip install flask-restx
 
 ### In case of problems during "flask db init" step, run this:
-   6. **To use Flask-RESTX install:**
+6. **To use Flask-RESTX install:**
    ```shell
    pip install --upgrade flask-restx
 
