@@ -2,6 +2,8 @@ from flask import request, jsonify, Response
 from telecomtalesapi import app, db
 from telecomtalesapi.auth import auth
 from telecomtalesapi.models.service import Service
+from telecomtalesapi.schemas import ServiceSchema  
+from marshmallow import ValidationError
 import xmltodict
 
 # Helper function to check if request is XML
@@ -12,26 +14,24 @@ def is_request_xml():
 @app.route('/services', methods=['POST'])
 @auth.login_required
 def create_service():
-    if is_request_xml():
-        data = xmltodict.parse(request.data)['service']
-    else:
-        data = request.json
+    schema = ServiceSchema()
+    try:
+        if is_request_xml():
+            data = schema.load(xmltodict.parse(request.data)['service'])
+        else:
+            data = schema.load(request.json)
 
-    # Check for existing service with the same details
-    existing_service = Service.query.filter_by(
-        service=data['service'],
-        value=data['value'],
-        comment=data['comment'],
-        address_id=data['address_id']
-    ).first()
-    if existing_service:
-        response_message = {'message': 'Service with these details already exists'}
-        return Response(xmltodict.unparse(response_message), mimetype='application/xml', status=400) if is_request_xml() else jsonify(response_message), 400
+        existing_service = Service.query.filter_by(**data).first()
+        if existing_service:
+            response_message = {'message': 'Service with these details already exists'}
+            return Response(xmltodict.unparse(response_message), mimetype='application/xml', status=400) if is_request_xml() else jsonify(response_message), 400
 
-    service = Service(**data)
-    db.session.add(service)
-    db.session.commit()
-    return Response(xmltodict.unparse({'service': service.to_dict()}), mimetype='application/xml', status=201) if is_request_xml() else jsonify(service.to_dict()), 201
+        service = Service(**data)
+        db.session.add(service)
+        db.session.commit()
+        return Response(xmltodict.unparse({'service': service.to_dict()}), mimetype='application/xml', status=201) if is_request_xml() else jsonify(service.to_dict()), 201
+    except ValidationError as err:
+        return jsonify(err.messages), 400
 
 # Route for retrieving a specific service by ID
 @app.route('/services/<int:service_id>', methods=['GET'])

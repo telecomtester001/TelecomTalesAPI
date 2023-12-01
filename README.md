@@ -11,6 +11,7 @@ TelecomTalesAPI is a RESTful API developed using Flask for managing telecom serv
 
 ## Setup Instructions
 
+
 ### Prerequisites
 - Python 3
 - pip (Python package installer)
@@ -44,11 +45,6 @@ TelecomTalesAPI is a RESTful API developed using Flask for managing telecom serv
    flask db migrate -m "Initial migration."
    flask db upgrade
 
-### Starting the Application:
-5. **to start the application, run:**
-   ```bash
-   python run.py
-
 ## API Testing Tool
 
 5. **Postman**
@@ -66,16 +62,18 @@ TelecomTalesAPI is a RESTful API developed using Flask for managing telecom serv
 6. **To use script run paython script_name.py**
    ```bash
    python create_user_script.py
-   python create_address_script.py
-   python create_service_script.py
-   python delete_address_script.py
-   python delete_service_script.py
-   python get_address_script.py
-   python get_service_script.py
-   python link_service_to_address_script.py
-   python query_addresses_script.py
-   python update_address_script.py
-   python update_service_script.py
+
+- `create_user_script.py`: Register a new user for accessing the API.
+- `create_address_script.py`: Add a new address to the database.
+- `create_service_script.py`: Create a new service associated with an address.
+- `delete_address_script.py`: Remove an existing address from the database.
+- `delete_service_script.py`: Delete a service from the database.
+- `get_address_script.py`: Retrieve details of a specific address.
+- `get_service_script.py`: Fetch details of a particular service.
+- `update_address_script.py`: Update information for an existing address.
+- `update_service_script.py`: Modify details of an existing service.
+  
+
 
 ## Docker Implementation
 

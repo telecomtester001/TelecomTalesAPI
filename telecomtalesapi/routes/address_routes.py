@@ -2,6 +2,8 @@ from flask import request, jsonify, Response
 from telecomtalesapi import app, db
 from telecomtalesapi.auth import auth
 from telecomtalesapi.models.address import Address
+from telecomtalesapi.schemas import AddressSchema  
+from marshmallow import ValidationError
 import xmltodict
 
 # Helper function to check if request is XML
@@ -12,28 +14,25 @@ def is_request_xml():
 @app.route('/addresses', methods=['POST'])
 @auth.login_required
 def create_address():
-    if is_request_xml():
-        data = xmltodict.parse(request.data)['address']
-    else:
-        data = request.json
+    schema = AddressSchema()
+    try:
+        if is_request_xml():
+            data = schema.load(xmltodict.parse(request.data)['address'])
+        else:
+            data = schema.load(request.json)
 
-    # Check for existing address with the same details
-    existing_address = Address.query.filter_by(
-        streetNo=data['streetNo'],
-        street=data['street'],
-        city=data['city'],
-        post=data['post'],
-        postNo=data['postNo']
-    ).first()
+        existing_address = Address.query.filter_by(**data).first()
+        if existing_address:
+            response_message = {'message': 'Address with these details already exists'}
+            return Response(xmltodict.unparse(response_message), mimetype='application/xml', status=400) if is_request_xml() else jsonify(response_message), 400
 
-    if existing_address:
-        response_message = {'message': 'Address with these details already exists'}
-        return Response(xmltodict.unparse(response_message), mimetype='application/xml', status=400) if is_request_xml() else jsonify(response_message), 400
+        address = Address(**data)
+        db.session.add(address)
+        db.session.commit()
+        return Response(xmltodict.unparse({'address': address.to_dict()}), mimetype='application/xml', status=201) if is_request_xml() else jsonify(address.to_dict()), 201
+    except ValidationError as err:
+        return jsonify(err.messages), 400
 
-    address = Address(**data)
-    db.session.add(address)
-    db.session.commit()
-    return Response(xmltodict.unparse({'address': address.to_dict()}), mimetype='application/xml', status=201) if is_request_xml() else jsonify(address.to_dict()), 201
 
 # Route to get an address by its ID
 @app.route('/addresses/<int:id>', methods=['GET'])
