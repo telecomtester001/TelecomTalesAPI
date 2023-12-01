@@ -5,8 +5,11 @@ def create_service(url, service_data, username, password):
     # Send the POST request to the API
     response = requests.post(url, json=service_data, auth=(username, password))
 
-    # Return the JSON response and status code
-    return response.json(), response.status_code
+    # Handle cases where the response might not be JSON
+    try:
+        return response.json(), response.status_code
+    except json.JSONDecodeError:
+        return "No JSON in response", response.status_code
 
 if __name__ == "__main__":
     # URL of the Flask app's endpoint for creating services

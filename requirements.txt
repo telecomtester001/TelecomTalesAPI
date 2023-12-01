@@ -3,6 +3,7 @@ Flask-RESTful
 Flask-SQLAlchemy
 Flask-Migrate
 Flask-HTTPAuth
+Flask-restx
 Werkzeug
 xmltodict
 marshmallow

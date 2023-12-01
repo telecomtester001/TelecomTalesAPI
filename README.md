@@ -16,30 +16,30 @@ TelecomTalesAPI is a RESTful API developed using Flask for managing telecom serv
 - Python 3
 - pip (Python package installer)
 
-### Installing Dependencies
+### Installing Dependencies - (or skip to pip install -r requirements.txt)
 
 1. **pip Installation**
-   ```bash
+   ```shell
    sudo apt install python3-pip
 
 2. **Flask and Related Libraries**
-   ```bash
+   ```shell
    pip install Flask Flask-RESTful Flask-SQLAlchemy flask-httpauth Flask-Migrate
 
 3. **Werkzeug Library**
-   ```bash
+   ```shell
    pip install Werkzeug
 
 ## Using Using requirements.txt
 
 0. **To install all dependencies at once:**
-   ```bash
+   ```shell
    pip install -r requirements.txt
 
 
 ### Set up the database:
 4. **Set up the database:**
-   ```bash
+   ```shell
    export FLASK_APP=run.py
    flask db init
    flask db migrate -m "Initial migration."
@@ -48,19 +48,29 @@ TelecomTalesAPI is a RESTful API developed using Flask for managing telecom serv
 ## API Testing Tool
 
 5. **Postman**
-   ```bash
+   ```shell
    snap install postman
+
+## Flask-RESTX to generate OpenAPI documentation
+6. **To use Flask-RESTX install:**
+   ```shell
+   pip install flask-restx
+
+### In case of problems during "flask db init" step, run this:
+   6. **To use Flask-RESTX install:**
+   ```shell
+   pip install --upgrade flask-restx
 
 ## Scripts
 
-6. **To use scripts install requests library**
-   ```bash
+7. **To use scripts install requests library**
+   ```shell
    pip install requests
 
 ## Navigate to script folder and run script 
 
-6. **To use script run paython script_name.py**
-   ```bash
+8. **To use script run paython script_name.py**
+   ```shell
    python create_user_script.py
 
 - `create_user_script.py`: Register a new user for accessing the API.
@@ -73,7 +83,49 @@ TelecomTalesAPI is a RESTful API developed using Flask for managing telecom serv
 - `update_address_script.py`: Update information for an existing address.
 - `update_service_script.py`: Modify details of an existing service.
   
+## Using the Flask-RESTX API
 
+This project utilizes Flask-RESTX to organize and manage the RESTful API endpoints. Flask-RESTX provides an easy-to-use interface for both creating and documenting your API. Here’s how to interact with it:
+
+### Getting Started
+
+6. **Install Dependencies:**
+
+   Make sure to install Flask-RESTX alongside Flask as previously stated:
+   ```shell
+   pip install flask-restx
+
+
+
+6. **Run the aplications by starting the Flask application:**
+
+   ```shell
+   flask run
+
+## Available Endpoints
+The API is structured into namespaces, which group related endpoints. The following namespaces are available:
+
+
+- `/addresses': Operations related to address entities.
+- `/services': Operations for service entities.
+- `/users': User-related operations.
+
+## Accessing Endpoints
+You can access the API endpoints using tools like curl or Postman. For example:
+
+   '''shell
+   curl -u username:password -X GET http://localhost:5000/addresses/
+
+This command retrieves all addresses if you replace username:password with valid credentials.
+Do note taht username:password should be some user and password of that user that is in the database
+
+## Documentation
+Flask-RESTX automatically generates Swagger documentation for all endpoints. Visit http://localhost:5000/ to view the interactive documentation and test the API directly from your browser.
+
+## Authentication
+The API uses HTTP Basic Authentication. Ensure you pass the correct username and password headers with each request that requires authentication.
+
+For a more detailed guide on how to use each endpoint, refer to the auto-generated Swagger documentation provided by Flask-RESTX.
 
 ## Docker Implementation
 
