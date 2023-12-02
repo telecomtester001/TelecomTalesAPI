@@ -129,4 +129,51 @@ For a more detailed guide on how to use each endpoint, refer to the auto-generat
 
 ## Docker Implementation
 
+### Docker Installation Guide
+Follow these steps to install Docker on your Ubuntu system:
+
+1. **Update the package list:**
+
+   ```shell
+   sudo apt-get update
+
+2. **Install packages to allow apt to use a repository over HTTPS:**
+
+   ```shell
+   sudo apt-get install apt-transport-https ca-certificates curl software-properties-common
+
+3. **Add Docker’s official GPG key:**
+
+   ```shell
+   curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+
+
+4. **Set up the stable Docker repository:**
+
+   ```shell
+   sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+
+5. **Update the package list again:**
+
+   ```shell
+   sudo apt-get update
+
+6. **Install containerd.io:**
+
+   ```shell
+   sudo apt-get install containerd.io
+
+7. **Install Docker CE:**
+
+   ```shell
+   sudo apt-get install docker-ce
+Install containerd.io and Docker CE:
+
+8. **Test your Docker installation by running the hello-world image:**
+   ```shell
+   sudo docker run hello-world
+
+This will download a test image and run it in a container. If you see a welcome message, Docker has been successfully installed.
+
+## How to run the project in docker
 ### TODO
