@@ -176,4 +176,36 @@ Install containerd.io and Docker CE:
 This will download a test image and run it in a container. If you see a welcome message, Docker has been successfully installed.
 
 ## How to run the project in docker
-### TODO
+
+
+1. **Build the project:**
+   ```shell
+   docker build -t telecomtalesapi .
+
+
+2. **To run in docker:**
+   ```shell
+   docker run -p 5000:5000 telecomtalesapi
+
+3.  **To get CONTAINER ID:**
+   ```shell
+   docker ps
+
+4.  **To get access container shell :**
+   ```shell
+   docker exec -it [container_id_or_name] /bin/bash
+
+Example:
+container ID 86e7d7088027
+
+   4.  **To get access container shell :**
+   ```shell
+   docker exec -it 86e7d7088027 /bin/bash
+
+
+5. **Set up the database:**
+   ```shell
+   export FLASK_APP=run.py
+   flask db init
+   flask db migrate -m "Initial migration."
+   flask db upgrade
