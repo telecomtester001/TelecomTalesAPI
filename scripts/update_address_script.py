@@ -1,17 +1,19 @@
 import requests
 import json
 
-def update_address(url, updated_data, username, password):
-    """Sends a PUT request to update an address."""
-    response = requests.put(url, headers={'Content-Type': 'application/json'}, 
-                            data=json.dumps(updated_data), auth=(username, password))
-    return response.json(), response.status_code
+def update_address(url, address_id, updated_data, username, password):
+    headers = {'Content-Type': 'application/json'}
+    response = requests.put(f"{url}/{address_id}", headers=headers, data=json.dumps(updated_data), auth=(username, password))
+    try:
+        return response.json(), response.status_code
+    except json.JSONDecodeError:
+        return response.text, response.status_code
 
-def main():
-    # Get address ID from the user
+if __name__ == "__main__":
+     # Get address ID from the user
+    url = 'http://localhost:5000/addresses/'
     address_id = input("Enter Address ID to update: ")
-    url = f'http://localhost:5000/addresses/{address_id}'
-
+    
     # Collect updated data from the user
     updated_data = {
         'streetNo': input("Enter updated Street Number: "),
@@ -26,10 +28,6 @@ def main():
     password = input("Enter your password: ")
 
     # Send the update request
-    result, status_code = update_address(url, updated_data, username, password)
-
+    result, status_code = update_address(url, address_id, updated_data, username, password)
     # Display the result
     print(f"Status Code: {status_code}\nResponse: {result}")
-
-if __name__ == '__main__':
-    main()
