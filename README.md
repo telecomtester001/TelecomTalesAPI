@@ -187,21 +187,20 @@ This will download a test image and run it in a container. If you see a welcome 
    ```shell
    docker run -p 5000:5000 telecomtalesapi
 
-3.  **To get CONTAINER ID:**
+3. **To get CONTAINER ID:**
    ```shell
    docker ps
 
-4.  **To get access container shell :**
+4. **To get access container shell :**
    ```shell
    docker exec -it [container_id_or_name] /bin/bash
 
 Example:
 container ID 86e7d7088027
 
-   4.  **To get access container shell :**
+4. **To get access container shell :**
    ```shell
    docker exec -it 86e7d7088027 /bin/bash
-
 
 5. **Set up the database:**
    ```shell
@@ -209,3 +208,8 @@ container ID 86e7d7088027
    flask db init
    flask db migrate -m "Initial migration."
    flask db upgrade
+
+5.  **Alternatively set up the database via script:**
+   ```shell
+   cd scripts/database_scripts
+   python database_initialization_script.py 
