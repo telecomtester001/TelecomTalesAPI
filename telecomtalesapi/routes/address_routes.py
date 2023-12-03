@@ -1,4 +1,5 @@
 from flask_restx import Resource
+from flask import Response 
 from telecomtalesapi import address_ns
 from telecomtalesapi import db
 from telecomtalesapi.models.address import Address
@@ -7,39 +8,53 @@ from marshmallow import ValidationError
 from flask import request, jsonify
 import xmltodict
 from telecomtalesapi.auth import auth
+from ..utils.api_utils import is_request_xml, should_return_xml, to_xml
 
-# Helper function to check if request is XML
-def is_request_xml():
-    return 'xml' in request.headers.get('Content-Type', '').lower()
 
-@address_ns.route('/')  # Define route at the namespace level
+@address_ns.route('/') # Define route at the namespace level
 class AddressList(Resource):
     @auth.login_required
     def get(self):
         # Retrieve all addresses
         addresses = Address.query.all()
-        return jsonify([address.to_dict() for address in addresses])
+        addresses_dict = [address.to_dict() for address in addresses]
+        
+        if should_return_xml():
+            xml_data = to_xml({'addresses': addresses_dict})
+            return Response(xml_data, mimetype='application/xml')
+        else:
+            return jsonify(addresses_dict)
 
     @auth.login_required
     def post(self):
         # Create a new address
         schema = AddressSchema()
         try:
+            # Check if the request is XML
             if is_request_xml():
                 data = schema.load(xmltodict.parse(request.data)['address'])
+                address = Address(**data)
+                db.session.add(address)
+                db.session.commit()
+                xml_data = to_xml({'address': address.to_dict()})
+                return xml_data, 201, {'Content-Type': 'application/xml'}
             else:
                 data = schema.load(request.json)
-
-            existing_address = Address.query.filter_by(**data).first()
-            if existing_address:
-                return {'message': 'Address with these details already exists'}, 400
-
-            address = Address(**data)
-            db.session.add(address)
-            db.session.commit()
-            return address.to_dict(), 201
+                existing_address = Address.query.filter_by(**data).first()
+                if existing_address:
+                    return {'message': 'Address with these details already exists'}, 400
+                            
+                address = Address(**data)
+                db.session.add(address)
+                db.session.commit()
+                return address.to_dict(), 201
         except ValidationError as err:
-            return err.messages, 400
+            err_data = {'error': err.messages}
+            if should_return_xml():
+                xml_error = to_xml(err_data)
+                return xml_error, 400, {'Content-Type': 'application/xml'}
+            else:
+                return err_data, 400
 
 @address_ns.route('/<int:id>')  # Route for specific address by ID
 class AddressResource(Resource):
@@ -49,7 +64,11 @@ class AddressResource(Resource):
         address = Address.query.get(id)
         if not address:
             return {'message': 'Address not found'}, 404
-        return address.to_dict()
+
+        if should_return_xml():
+            return to_xml({'address': address.to_dict()}), 200, {'Content-Type': 'application/xml'}
+        else:
+            return address.to_dict(), 200
 
     @auth.login_required
     def put(self, id):
@@ -64,9 +83,16 @@ class AddressResource(Resource):
             for key, value in data.items():
                 setattr(address, key, value)
             db.session.commit()
-            return address.to_dict(), 200
+
+            if should_return_xml():
+                return to_xml({'address': address.to_dict()}), 200, {'Content-Type': 'application/xml'}
+            else:
+                return address.to_dict(), 200
         except ValidationError as err:
-            return err.messages, 400
+            if should_return_xml():
+                return to_xml({'error': err.messages}), 400, {'Content-Type': 'application/xml'}
+            else:
+                return err.messages, 400
 
     @auth.login_required
     def delete(self, id):
@@ -89,7 +115,11 @@ class AddressQuery(Resource):
             if hasattr(Address, key):
                 query = query.filter(getattr(Address, key) == value)
         addresses = query.all()
-        return jsonify([address.to_dict() for address in addresses])
+
+        if should_return_xml():
+            return to_xml({'addresses': [address.to_dict() for address in addresses]}), 200, {'Content-Type': 'application/xml'}
+        else:
+            return jsonify([address.to_dict() for address in addresses])
 
 @address_ns.route('/<int:address_id>/services')  # Route for listing services of a specific address
 class AddressServices(Resource):
@@ -100,4 +130,8 @@ class AddressServices(Resource):
         if not address:
             return {'message': 'Address not found'}, 404
         services = address.services.all()
-        return jsonify([service.to_dict() for service in services])
+
+        if should_return_xml():
+            return to_xml({'services': [service.to_dict() for service in services]}), 200, {'Content-Type': 'application/xml'}
+        else:
+            return jsonify([service.to_dict() for service in services])

@@ -7,10 +7,8 @@ from marshmallow import ValidationError
 from flask import request, jsonify
 import xmltodict
 from telecomtalesapi.auth import auth
+from ..utils.api_utils import is_request_xml, should_return_xml, to_xml
 
-# Helper function to check if request is XML
-def is_request_xml():
-    return 'xml' in request.headers.get('Content-Type', '').lower()
 
 @service_ns.route('/')  # Define route at the namespace level
 class ServiceList(Resource):
