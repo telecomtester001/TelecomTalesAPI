@@ -1,14 +1,22 @@
 from flask_restx import Resource
+from flask_restx import fields
+from flask import request
 from telecomtalesapi import user_ns, db
 from telecomtalesapi.models.user import User
 from telecomtalesapi.schemas import UserSchema
 from marshmallow import ValidationError
-from flask import request
 import xmltodict
 from ..utils.api_utils import is_request_xml, should_return_xml, to_xml
 
+user_model = user_ns.model('User', {
+    'username': fields.String(required=True, description='The username'),
+    'password': fields.String(required=True, description='The password for that user'),
+})
+
+
 @user_ns.route('/')  # Define route at the namespace level
 class UserList(Resource):
+    @user_ns.expect(user_model, validate=True)
     def post(self):
         """Create a new user."""
         schema = UserSchema()

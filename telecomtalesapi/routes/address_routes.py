@@ -1,15 +1,24 @@
 from flask_restx import Resource
-from flask import Response 
+from flask_restx import fields
+from flask import Response
+from flask import request, jsonify
 from telecomtalesapi import address_ns
 from telecomtalesapi import db
 from telecomtalesapi.models.address import Address
 from telecomtalesapi.schemas import AddressSchema
 from marshmallow import ValidationError
-from flask import request, jsonify
 import xmltodict
 from telecomtalesapi.auth import auth
 from ..utils.api_utils import is_request_xml, should_return_xml, to_xml
 
+# Define the model for Address input
+address_model = address_ns.model('Address', {
+    'streetNo': fields.String(required=True, description='The street number'),
+    'street': fields.String(required=True, description='The street name'),
+    'city': fields.String(required=True, description='The city'),
+    'post': fields.String(required=True, description='The post district'),
+    'postNo': fields.Integer(required=True, description='The post number')
+})
 
 @address_ns.route('/') # Define route at the namespace level
 class AddressList(Resource):
@@ -26,6 +35,7 @@ class AddressList(Resource):
             return jsonify(addresses_dict)
 
     @auth.login_required
+    @address_ns.expect(address_model, validate=True)
     def post(self):
         # Create a new address
         schema = AddressSchema()
@@ -59,7 +69,8 @@ class AddressList(Resource):
 @address_ns.route('/<int:id>')  # Route for specific address by ID
 class AddressResource(Resource):
     @auth.login_required
-    def get(self, id):
+    @address_ns.expect(address_model, validate=True)
+    def put(self, id):
         # Get a specific address by ID
         address = Address.query.get(id)
         if not address:
@@ -71,6 +82,7 @@ class AddressResource(Resource):
             return address.to_dict(), 200
 
     @auth.login_required
+    @address_ns.expect(address_model, validate=True)
     def put(self, id):
         # Update a specific address by ID
         schema = AddressSchema(partial=True)

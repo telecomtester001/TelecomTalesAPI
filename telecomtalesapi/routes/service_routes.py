@@ -1,13 +1,22 @@
 from flask_restx import Resource
+from flask_restx import fields
+from flask import Response
+from flask import request, jsonify
 from telecomtalesapi import service_ns
 from telecomtalesapi import db
 from telecomtalesapi.models.service import Service
 from telecomtalesapi.schemas import ServiceSchema
 from marshmallow import ValidationError
-from flask import request, jsonify
 import xmltodict
 from telecomtalesapi.auth import auth
 from ..utils.api_utils import is_request_xml, should_return_xml, to_xml
+
+service_model = service_ns.model('Service', {
+    'service': fields.String(required=True, description='The service name'),
+    'value': fields.Boolean(required=True, description='The status of service'),
+    'comment': fields.String(required=True, description='The comment for this specific service'),
+    'address_id': fields.Integer(required=True, description='Address id to wich this service is linked'),
+})
 
 
 @service_ns.route('/')  # Define route at the namespace level
@@ -19,6 +28,7 @@ class ServiceList(Resource):
         return jsonify([service.to_dict() for service in services])
 
     @auth.login_required
+    @service_ns.expect(service_model, validate=True)
     def post(self):
         # Create a new service
         schema = ServiceSchema()
@@ -50,6 +60,7 @@ class ServiceResource(Resource):
         return service.to_dict()
 
     @auth.login_required
+    @service_ns.expect(service_model, validate=True)
     def put(self, service_id):
         # Update a specific service by ID
         schema = ServiceSchema(partial=True)
