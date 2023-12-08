@@ -1,5 +1,6 @@
 from flask_restx import Resource
 from flask_restx import fields
+from flask_restx import reqparse
 from flask import Response
 from flask import request, jsonify
 from telecomtalesapi import address_ns
@@ -19,6 +20,14 @@ address_model = address_ns.model('Address', {
     'post': fields.String(required=True, description='The post district'),
     'postNo': fields.Integer(required=True, description='The post number')
 })
+
+# Create a request parser for query parameters
+query_parser = reqparse.RequestParser()
+query_parser.add_argument('streetNo', type=str, help='Street Number')
+query_parser.add_argument('street', type=str, help='Street Name')
+query_parser.add_argument('city', type=str, help='City')
+query_parser.add_argument('post', type=str, help='Post District')
+query_parser.add_argument('postNo', type=int, help='Post Number')
 
 @address_ns.route('/') # Define route at the namespace level
 class AddressList(Resource):
@@ -116,16 +125,21 @@ class AddressResource(Resource):
         db.session.commit()
         return '', 204
 
-@address_ns.route('/query')  # Route for querying addresses
+@address_ns.route('/query')
 class AddressQuery(Resource):
     @auth.login_required
+    @address_ns.expect(query_parser)  # Document query parameters
     def get(self):
-        # Query addresses based on request arguments
-        args = request.args
+        
+        #Query addresses based on different parameters such as street, city, etc.
+        
+        args = query_parser.parse_args()  # Parse query parameters
         query = Address.query
+
         for key, value in args.items():
-            if hasattr(Address, key):
+            if value and hasattr(Address, key):
                 query = query.filter(getattr(Address, key) == value)
+
         addresses = query.all()
 
         if should_return_xml():
