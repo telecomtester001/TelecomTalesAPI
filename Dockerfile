@@ -4,6 +4,11 @@ FROM python:3.8-slim
 # Set the working directory in the container
 WORKDIR /app
 
+# Update package lists, install curl, and clean up
+RUN apt-get update && \
+    apt-get install -y curl && \
+    rm -rf /var/lib/apt/lists/*
+
 # Copy the current directory contents into the container at /app
 COPY . /app
 

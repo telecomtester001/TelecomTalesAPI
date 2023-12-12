@@ -4,9 +4,8 @@ import subprocess
 
 # List of scripts 
 scripts = [
-    "create_address_script_xml.py",
+    "create_address_script_xml_json.py",
     "create_service_script_xml.py",
-    "create_address_script.py",
     "create_service_script.py",
     "create_user_script.py",
     "delete_address_script.py",
