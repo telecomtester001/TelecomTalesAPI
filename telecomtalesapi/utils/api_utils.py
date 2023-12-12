@@ -18,8 +18,14 @@ def is_request_xml():
 
 # Helper function to check if response should be XML
 def should_return_xml():
-    accept = request.headers.get('Accept', '').lower()
-    return any(mime in accept for mime in XML_MIME_TYPES)
+    # Check if the request's Content-Type is XML
+    content_type_xml = any(mime in request.headers.get('Content-Type', '').lower() for mime in XML_MIME_TYPES)
+
+    # Check if the request's Accept header explicitly asks for XML
+    accept_header_xml = any(mime in request.headers.get('Accept', '').lower() for mime in XML_MIME_TYPES)
+
+    return content_type_xml or accept_header_xml
+
 
 # Helper function to convert data to XML
 def to_xml(data, root_element='response'):
