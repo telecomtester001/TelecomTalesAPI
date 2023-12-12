@@ -3,9 +3,6 @@ info:
   title: Telecom Tales API
   description: A RESTful service providing address and service information for a fictional telecom operator.
   version: "1.0.0"
-servers:
-  - url: http://localhost:5000
-    description: Development server
 security:
   - basicAuth: []
 paths:
@@ -26,6 +23,11 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Address'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Address'
     post:
       summary: Create a new address
       operationId: createAddress
@@ -39,6 +41,9 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Address'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Address'
       responses:
         '201':
           description: Address created
@@ -46,24 +51,170 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Address'
-
-  /service:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Address'
+  /addresses/{id}:
     get:
-      summary: List all services
-      operationId: listServices
+      summary: Get an address by ID
+      operationId: getAddress
       tags:
-        - Services
+        - Addresses
       security:
         - basicAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: The address ID
       responses:
         '200':
-          description: A list of Services
+          description: An address object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Address'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Address'
+        '404':
+          description: Address not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      summary: Update an existing address
+      operationId: updateAddress
+      tags:
+        - Addresses
+      security:
+        - basicAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: The address ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Address'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Address'
+      responses:
+        '200':
+          description: Address updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Address'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Address'
+        '404':
+          description: Address not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      summary: Delete an existing address
+      operationId: deleteAddress
+      tags:
+        - Addresses
+      security:
+        - basicAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: The address ID
+      responses:
+        '204':
+          description: Address deleted
+          content: {}  # No content returned for a 204 response
+        '404':
+          description: Address not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /addresses/query:
+    get:
+      summary: Query addresses based on criteria
+      operationId: queryAddresses
+      tags:
+        - Addresses
+      security:
+        - basicAuth: []
+      parameters:
+        - in: query
+          name: streetNo
+          schema:
+            type: string
+          description: Street Number
+        - in: query
+          name: street
+          schema:
+            type: string
+          description: Street Name
+        - in: query
+          name: city
+          schema:
+            type: string
+          description: City
+        - in: query
+          name: post
+          schema:
+            type: string
+          description: Post District
+        - in: query
+          name: postNo
+          schema:
+            type: integer
+          description: Post Number
+      responses:
+        '200':
+          description: A list of addresses matching the query
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Service'
+                  $ref: '#/components/schemas/Address'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Address'
+        '404':
+          description: No addresses found for the specified criteria
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /services:
     post:
       summary: Create a new service
       operationId: createService
@@ -77,17 +228,196 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Service'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Service'
       responses:
         '201':
-          description: Service created
+          description: Service created successfully
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Service'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Service'
+        '400':
+          description: Validation error or service already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+    get:
+      summary: List all services
+      operationId: getAllServices
+      tags:
+        - Services
+      security:
+        - basicAuth: []
+      responses:
+        '200':
+          description: An array of service objects
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Service'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Service'
+  /services/{service_id}:
+    get:
+      summary: Retrieve a specific service by ID
+      operationId: getService
+      tags:
+        - Services
+      security:
+        - basicAuth: []
+      parameters:
+        - in: path
+          name: service_id
+          required: true
+          schema:
+            type: integer
+          description: Unique identifier of the service
+      responses:
+        '200':
+          description: Service object found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Service'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Service'
+        '404':
+          description: Service not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      summary: Update a specific service by ID
+      operationId: updateService
+      tags:
+        - Services
+      security:
+        - basicAuth: []
+      parameters:
+        - in: path
+          name: service_id
+          required: true
+          schema:
+            type: integer
+          description: Unique identifier of the service
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Service'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Service'
+      responses:
+        '200':
+          description: Service updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Service'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Service'
+        '404':
+          description: Service not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      summary: Delete a specific service by ID
+      operationId: deleteService
+      tags:
+        - Services
+      security:
+        - basicAuth: []
+      parameters:
+        - in: path
+          name: service_id
+          required: true
+          schema:
+            type: integer
+          description: Unique identifier of the service
+      responses:
+        '204':
+          description: Service deleted successfully
+          content: {} # No content for a 204 response
+        '404':
+          description: Service not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /users:
+    post:
+      summary: Create a new user
+      operationId: createUser
+      tags:
+        - User
+      security:
+        - basicAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '201':
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '400':
+          description: Error creating user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+
 components:
   schemas:
     Address:
       type: object
+      xml:
+        name: 'Address'
       required:
         - streetNo
         - street
@@ -105,9 +435,10 @@ components:
           type: string
         postNo:
           type: integer
-
     Service:
       type: object
+      xml:
+        name: 'Service'
       properties:
         service:
           type: string
@@ -117,8 +448,45 @@ components:
           type: string
         address_id:
           type: integer
-
-      securitySchemes:
-        basicAuth:
-          type: http
-          scheme: basic
+      required:
+        - service
+        - value
+        - address_id
+    User:
+      type: object
+      xml:
+      name: 'User'
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+      required:
+        - username
+        - password
+    AddressResponse:
+      type: object
+      properties:
+        message:
+          type: string
+    ServiceResponse:
+      type: object
+      properties:
+        message:
+          type: string
+    UserResponse:
+      type: object
+      properties:
+        message:
+          type: string
+    Error:
+      type: object
+      xml:
+        name: 'Error'
+      properties:
+        error:
+          type: string
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic

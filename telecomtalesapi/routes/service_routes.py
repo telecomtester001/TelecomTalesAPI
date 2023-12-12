@@ -15,7 +15,7 @@ def create_service():
     schema = ServiceSchema()
     try:
         if is_request_xml():
-            data = schema.load(xmltodict.parse(request.data)['service'])
+            data = schema.load(xmltodict.parse(request.data)['Service'])
         else:
             data = schema.load(request.json)
 
@@ -30,7 +30,7 @@ def create_service():
         service = Service(**data)
         db.session.add(service)
         db.session.commit()
-        service_data = {'service': service.to_dict()}
+        service_data = {'Service': service.to_dict()}
         if should_return_xml():
             return output_xml(service_data, 201)
         else:
@@ -52,7 +52,7 @@ def get_service(service_id):
         else:
             return output_json(response_message, 404)
 
-    service_data = {'service': service.to_dict()}
+    service_data = {'Service': service.to_dict()}
     if should_return_xml():
         return output_xml(service_data, 200)
     else:
@@ -71,11 +71,11 @@ def update_service(service_id):
             return output_json(response_message, 404)
 
     try:
-        data = xmltodict.parse(request.data)['service'] if is_request_xml() else request.json
+        data = xmltodict.parse(request.data)['Service'] if is_request_xml() else request.json
         for key, value in data.items():
             setattr(service, key, value)
         db.session.commit()
-        service_data = {'service': service.to_dict()}
+        service_data = {'Service': service.to_dict()}
         if should_return_xml():
             return output_xml(service_data, 200)
         else:

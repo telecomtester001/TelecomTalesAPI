@@ -15,7 +15,7 @@ def create_address():
     schema = AddressSchema()
     try:
         if is_request_xml():
-            data = schema.load(xmltodict.parse(request.data)['address'])
+            data = schema.load(xmltodict.parse(request.data)['Address'])
         else:
             data = schema.load(request.json)
 
@@ -30,7 +30,7 @@ def create_address():
         address = Address(**data)
         db.session.add(address)
         db.session.commit()
-        address_data = {'address': address.to_dict()}
+        address_data = {'Address': address.to_dict()}
         if should_return_xml():
             return output_xml(address_data, 201)
         else:
@@ -51,7 +51,7 @@ def get_address(id):
         else:
             return output_json(response_message, 404)
 
-    address_data = {'address': address.to_dict()}
+    address_data = {'Address': address.to_dict()}
     if should_return_xml():
         return output_xml(address_data, 200)
     else:
@@ -116,11 +116,11 @@ def update_address(id):
             return output_json(response_message, 404)
 
     try:
-        data = xmltodict.parse(request.data)['address'] if is_request_xml() else request.json
+        data = xmltodict.parse(request.data)['Address'] if is_request_xml() else request.json
         for key, value in data.items():
             setattr(address, key, value)
         db.session.commit()
-        address_data = {'address': address.to_dict()}
+        address_data = {'Address': address.to_dict()}
         if should_return_xml():
             return output_xml(address_data, 200)
         else:

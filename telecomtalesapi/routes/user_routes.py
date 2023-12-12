@@ -12,7 +12,7 @@ def create_user():
     try:
         # Handling both XML and JSON requests
         if is_request_xml():
-            data = schema.load(xmltodict.parse(request.data)['user'])
+            data = schema.load(xmltodict.parse(request.data)['User'])
         else:
             data = schema.load(request.json)
     except ValidationError as err:

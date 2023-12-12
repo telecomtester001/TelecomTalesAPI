@@ -12,7 +12,7 @@ def create_address(url, address_data, username, password, response_format='json'
     headers = {'Content-Type': 'application/json', 'Accept': f'application/{response_format}'}
     response = requests.post(f"{url}/addresses", headers=headers, data=json.dumps(address_data), auth=(username, password))
     response_data = parse_response(response, response_format)
-    address_id = response_data.get('address', {}).get('id')
+    address_id = response_data.get('Address', {}).get('id')
     return address_id, response.status_code
 
 def create_service(url, service_data, username, password, response_format='json'):
