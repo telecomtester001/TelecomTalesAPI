@@ -1,0 +1,124 @@
+openapi: 3.0.0
+info:
+  title: Telecom Tales API
+  description: A RESTful service providing address and service information for a fictional telecom operator.
+  version: "1.0.0"
+servers:
+  - url: http://localhost:5000
+    description: Development server
+security:
+  - basicAuth: []
+paths:
+  /addresses:
+    get:
+      summary: List all addresses
+      operationId: listAddresses
+      tags:
+        - Addresses
+      security:
+        - basicAuth: []
+      responses:
+        '200':
+          description: A list of addresses
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Address'
+    post:
+      summary: Create a new address
+      operationId: createAddress
+      tags:
+        - Addresses
+      security:
+        - basicAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Address'
+      responses:
+        '201':
+          description: Address created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Address'
+
+  /service:
+    get:
+      summary: List all services
+      operationId: listServices
+      tags:
+        - Services
+      security:
+        - basicAuth: []
+      responses:
+        '200':
+          description: A list of Services
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Service'
+    post:
+      summary: Create a new service
+      operationId: createService
+      tags:
+        - Services
+      security:
+        - basicAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Service'
+      responses:
+        '201':
+          description: Service created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Service'
+components:
+  schemas:
+    Address:
+      type: object
+      required:
+        - streetNo
+        - street
+        - city
+        - post
+        - postNo
+      properties:
+        streetNo:
+          type: string
+        street:
+          type: string
+        city:
+          type: string
+        post:
+          type: string
+        postNo:
+          type: integer
+
+    Service:
+      type: object
+      properties:
+        service:
+          type: string
+        value:
+          type: boolean
+        comment:
+          type: string
+        address_id:
+          type: integer
+
+      securitySchemes:
+        basicAuth:
+          type: http
+          scheme: basic
