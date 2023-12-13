@@ -4,21 +4,18 @@ import subprocess
 
 # List of scripts 
 scripts = [
-    "create_address_script_xml_json.py",
-    "create_service_script_xml.py",
-    "create_service_script.py",
     "create_user_script.py",
+    "update_address_script.py",
+    "update_service_script.py"
     "delete_address_script.py",
     "delete_service_script.py",
     "get_address_script.py",
-    "get_all_addresses_script.py",
-    "get_all_services_for_address.py",
-    "get_all_services_script.py",
     "get_service_script.py",
-    "load_mock_script.py",
+    "get_all_addresses_script.py",
+    "get_all_services_script.py",
     "query_addresses_script.py",
-    "update_address_script.py",
-    "update_service_script.py"
+    "load_mock_script.py",
+    "database_scripts/database_initialization_script.py"
 ]
 
 def run_script(script_name):

@@ -51,50 +51,33 @@ TelecomTalesAPI is a RESTful API developed using Flask for managing telecom serv
    ```shell
    snap install postman
 
-## Flask-RESTX to generate OpenAPI documentation
-6. **To use Flask-RESTX install:**
-   ```shell
-   pip install flask-restx
-
-### In case of problems during "flask db init" step, run this:
-6. **To use Flask-RESTX install:**
-   ```shell
-   pip install --upgrade flask-restx
 
 ## Scripts
 
-7. **To use scripts install requests library**
+6. **To use scripts install requests library**
    ```shell
    pip install requests
 
 ## Navigate to script folder and run script 
 
-8. **To use script run paython script_name.py**
+7. **To use script run paython script_name.py**
    ```shell
-   python create_user_script.py
+   python a_script_selector_script.py
 
+
+- `a_script_selector_script.py`: Script for selecting other scripts.
 - `create_user_script.py`: Register a new user for accessing the API.
-- `create_address_script.py`: Add a new address to the database.
-- `create_service_script.py`: Create a new service associated with an address.
+- `update_address_script.py`: Update information for an existing address.
+- `update_service_script.py`: Modify details of an existing service.
 - `delete_address_script.py`: Remove an existing address from the database.
 - `delete_service_script.py`: Delete a service from the database.
 - `get_address_script.py`: Retrieve details of a specific address.
 - `get_service_script.py`: Fetch details of a particular service.
-- `update_address_script.py`: Update information for an existing address.
-- `update_service_script.py`: Modify details of an existing service.
-  
-## Using the Flask-RESTX API
-
-This project utilizes Flask-RESTX to organize and manage the RESTful API endpoints. Flask-RESTX provides an easy-to-use interface for both creating and documenting your API. Here’s how to interact with it:
-
-### Getting Started
-
-6. **Install Dependencies:**
-
-   Make sure to install Flask-RESTX alongside Flask as previously stated:
-   ```shell
-   pip install flask-restx
-
+- `get_all_addresses_script.py`:  Retrieve details of all addresses.
+- `get_all_services_script.py`: Fetch details of all servicess.
+- `query_addresses_script.py`: Retrieve details of an address via query.
+- `load_mock_script.py`: Load mock data from mock1JSON.json .
+- `database_scripts/database_initialization_script.py`: Initialize the database. -*should be executed before interacting with other scripts or swagger documentation*
 
 
 6. **Run the aplications by starting the Flask application:**
@@ -114,18 +97,22 @@ The API is structured into namespaces, which group related endpoints. The follow
 You can access the API endpoints using tools like curl or Postman. For example:
 
    '''shell
-   curl -u username:password -X GET http://localhost:5000/addresses/
+   curl -u username:password -X GET http://localhost:5000/addresses/ 
+
 
 This command retrieves all addresses if you replace username:password with valid credentials.
-Do note taht username:password should be some user and password of that user that is in the database
+Do note that username:password should be some user and password of that user that is in the database,
+database should be initialized ,
+the address will be different if used in a enviroment like github Codespaces, and it is not static in swagger.yaml .
+
 
 ## Documentation
-Flask-RESTX automatically generates Swagger documentation for all endpoints. Visit http://localhost:5000/ to view the interactive documentation and test the API directly from your browser.
+For Swagger documentation for all endpoints. Visit http://localhost:5000/ to view the interactive documentation and test the API directly from your browser.
+For a more detailed guide on how to use each endpoint.
+The address will be different if used in a enviroment like github Codespaces, and it is not static in swagger.yaml .
 
 ## Authentication
 The API uses HTTP Basic Authentication. Ensure you pass the correct username and password headers with each request that requires authentication.
-
-For a more detailed guide on how to use each endpoint, refer to the auto-generated Swagger documentation provided by Flask-RESTX.
 
 ## Docker Implementation
 
