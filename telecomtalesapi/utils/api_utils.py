@@ -16,6 +16,7 @@ def is_request_xml():
     content_type = request.headers.get('Content-Type', '').lower()
     return any(mime in content_type for mime in XML_MIME_TYPES)
 
+
 # Helper function to check if response should be XML
 def should_return_xml():
     # Check if the request's Content-Type is XML
@@ -27,14 +28,6 @@ def should_return_xml():
     return content_type_xml or accept_header_xml
 
 
-# Helper function to convert data to XML
-def to_xml(data, root_element='response'):
-    try:
-        return xmltodict.unparse({root_element: data})
-    except Exception as e:
-        logging.error(f"Error converting data to XML: {e}")
-        raise
-
 # Helper function to make a Flask response with a JSON encoded body
 def output_json(data, code, headers=None):
     resp_body = json.dumps(data)
@@ -43,6 +36,7 @@ def output_json(data, code, headers=None):
     if headers:
         resp.headers.extend(headers)
     return resp
+
 
 # Helper function to make a Flask response with an XML encoded body
 def output_xml(data, code, headers=None):

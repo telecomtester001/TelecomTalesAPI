@@ -6,7 +6,7 @@ from telecomtalesapi.auth import auth
 from telecomtalesapi.models.service import Service
 from telecomtalesapi.schemas import ServiceSchema  
 from marshmallow import ValidationError
-from ..utils.api_utils import is_request_xml, should_return_xml, to_xml , output_json , output_xml
+from ..utils.api_utils import is_request_xml, should_return_xml , output_json , output_xml
 
 # Route for creating a new service
 @app.route('/services', methods=['POST'])

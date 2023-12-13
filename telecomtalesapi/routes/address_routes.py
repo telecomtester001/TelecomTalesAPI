@@ -6,7 +6,7 @@ from telecomtalesapi.auth import auth
 from telecomtalesapi.models.address import Address
 from telecomtalesapi.schemas import AddressSchema  
 from marshmallow import ValidationError
-from ..utils.api_utils import is_request_xml, should_return_xml, to_xml , output_json , output_xml
+from ..utils.api_utils import is_request_xml, should_return_xml , output_json , output_xml
 
 # Route to create a new address
 @app.route('/addresses', methods=['POST'])
