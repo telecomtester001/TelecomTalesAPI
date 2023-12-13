@@ -6,7 +6,7 @@ import subprocess
 scripts = [
     "create_user_script.py",
     "update_address_script.py",
-    "update_service_script.py"
+    "update_service_script.py",
     "delete_address_script.py",
     "delete_service_script.py",
     "get_address_script.py",
