@@ -24,3 +24,4 @@ for command in commands:
         break
 else:
     print("Database initialization complete.")
+

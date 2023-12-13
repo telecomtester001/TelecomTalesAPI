@@ -1,118 +1,88 @@
-import xmltodict
-
-from flask import request, jsonify, Response
-from telecomtalesapi import app, db
-from telecomtalesapi.auth import auth
+from flask_restx import Resource
+from flask_restx import fields
+from flask import Response
+from flask import request, jsonify
+from telecomtalesapi import service_ns
+from telecomtalesapi import db
 from telecomtalesapi.models.service import Service
-from telecomtalesapi.schemas import ServiceSchema  
+from telecomtalesapi.schemas import ServiceSchema
 from marshmallow import ValidationError
-from ..utils.api_utils import is_request_xml, should_return_xml , output_json , output_xml
+import xmltodict
+from telecomtalesapi.auth import auth
+from ..utils.api_utils import is_request_xml, should_return_xml, to_xml
 
-# Route for creating a new service
-@app.route('/services', methods=['POST'])
-@auth.login_required
-def create_service():
-    schema = ServiceSchema()
-    try:
-        if is_request_xml():
-            data = schema.load(xmltodict.parse(request.data)['Service'])
-        else:
-            data = schema.load(request.json)
+service_model = service_ns.model('Service', {
+    'service': fields.String(required=True, description='The service name'),
+    'value': fields.Boolean(required=True, description='The status of service'),
+    'comment': fields.String(required=True, description='The comment for this specific service'),
+    'address_id': fields.Integer(required=True, description='Address id to wich this service is linked'),
+})
 
-        existing_service = Service.query.filter_by(**data).first()
-        if existing_service:
-            response_message = {'message': 'Service with these details already exists'}
-            if should_return_xml():
-                return output_xml(response_message, 400)
+
+@service_ns.route('/')  # Define route at the namespace level
+class ServiceList(Resource):
+    @auth.login_required
+    def get(self):
+        # Retrieve all services
+        services = Service.query.all()
+        return jsonify([service.to_dict() for service in services])
+
+    @auth.login_required
+    @service_ns.expect(service_model, validate=True)
+    def post(self):
+        # Create a new service
+        schema = ServiceSchema()
+        try:
+            if is_request_xml():
+                data = schema.load(xmltodict.parse(request.data)['service'])
             else:
-                return output_json(response_message, 400)
+                data = schema.load(request.json)
 
-        service = Service(**data)
-        db.session.add(service)
-        db.session.commit()
-        service_data = {'Service': service.to_dict()}
-        if should_return_xml():
-            return output_xml(service_data, 201)
-        else:
-            return output_json(service_data, 201)
-    except ValidationError as err:
-        error_message = {'error': err.messages}
-        return output_json(error_message, 400) if not should_return_xml() else output_xml(error_message, 400)
+            existing_service = Service.query.filter_by(**data).first()
+            if existing_service:
+                return {'message': 'Service with these details already exists'}, 400
 
+            service = Service(**data)
+            db.session.add(service)
+            db.session.commit()
+            return service.to_dict(), 201
+        except ValidationError as err:
+            return err.messages, 400
 
-# Route for retrieving a specific service by ID
-@app.route('/services/<int:service_id>', methods=['GET'])
-@auth.login_required
-def get_service(service_id):
-    service = Service.query.get(service_id)
-    if not service:
-        response_message = {'message': 'Service not found'}
-        if should_return_xml():
-            return output_xml(response_message, 404)
-        else:
-            return output_json(response_message, 404)
+@service_ns.route('/<int:service_id>')  # Route for specific service by ID
+class ServiceResource(Resource):
+    @auth.login_required
+    def get(self, service_id):
+        # Get a specific service by ID
+        service = Service.query.get(service_id)
+        if not service:
+            return {'message': 'Service not found'}, 404
+        return service.to_dict()
 
-    service_data = {'Service': service.to_dict()}
-    if should_return_xml():
-        return output_xml(service_data, 200)
-    else:
-        return output_json(service_data, 200)
+    @auth.login_required
+    @service_ns.expect(service_model, validate=True)
+    def put(self, service_id):
+        # Update a specific service by ID
+        schema = ServiceSchema(partial=True)
+        service = Service.query.get(service_id)
+        if not service:
+            return {'message': 'Service not found'}, 404
 
-# Route for updating a specific service by ID
-@app.route('/services/<int:service_id>', methods=['PUT'])
-@auth.login_required
-def update_service(service_id):
-    service = Service.query.get(service_id)
-    if not service:
-        response_message = {'message': 'Service not found'}
-        if should_return_xml():
-            return output_xml(response_message, 404)
-        else:
-            return output_json(response_message, 404)
+        try:
+            data = schema.load(request.json) if not is_request_xml() else xmltodict.parse(request.data)['service']
+            for key, value in data.items():
+                setattr(service, key, value)
+            db.session.commit()
+            return service.to_dict(), 200
+        except ValidationError as err:
+            return err.messages, 400
 
-    try:
-        data = xmltodict.parse(request.data)['Service'] if is_request_xml() else request.json
-        for key, value in data.items():
-            setattr(service, key, value)
-        db.session.commit()
-        service_data = {'Service': service.to_dict()}
-        if should_return_xml():
-            return output_xml(service_data, 200)
-        else:
-            return output_json(service_data, 200)
-    except Exception as e:
-        error_message = {'error': str(e)}
-        return output_json(error_message, 400) if not should_return_xml() else output_xml(error_message, 400)
-
-
-# Route for deleting a specific service by ID
-@app.route('/services/<int:service_id>', methods=['DELETE'])
-@auth.login_required
-def delete_service(service_id):
-    service = Service.query.get(service_id)
-    if not service:
-        response_message = {'message': 'Service not found'}
-        if should_return_xml():
-            return output_xml(response_message, 404)
-        else:
-            return output_json(response_message, 404)
-
-    try:
+    @auth.login_required
+    def delete(self, service_id):
+        # Delete a specific service by ID
+        service = Service.query.get(service_id)
+        if not service:
+            return {'message': 'Service not found'}, 404
         db.session.delete(service)
         db.session.commit()
         return '', 204
-    except Exception as e:
-        error_message = {'error': str(e)}
-        return output_json(error_message, 500) if not should_return_xml() else output_xml(error_message, 500)
-
-
-# Route for listing all services
-@app.route('/services', methods=['GET'])
-@auth.login_required
-def get_all_services():
-    services = Service.query.all()
-    services_data = {'services': [service.to_dict() for service in services]}
-    if should_return_xml():
-        return output_xml(services_data, 200)
-    else:
-        return output_json(services_data, 200)
