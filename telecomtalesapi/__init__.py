@@ -2,26 +2,25 @@
 
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 from flask_httpauth import HTTPBasicAuth
+from flask_cors import CORS
 from config import DevelopmentConfig
-from flask_restx import Api, Namespace
 
 app = Flask(__name__)  # Create the Flask application instance
 app.config.from_object(DevelopmentConfig)  # Load configuration
 
 db = SQLAlchemy(app)  # Initialize SQLAlchemy with the Flask app
+migrate = Migrate(app, db)
+CORS(app)# Enable CORS for all routes
 auth = HTTPBasicAuth()  # Initialize auth
-api = Api(app) # Initialize Flask-RESTX Api
 
-# Create namespaces
-address_ns = Namespace('addresses', description='Address related operations')
-service_ns = Namespace('services', description='Service related operations')
-user_ns = Namespace('users', description='User related operations') 
 
-# Add namespaces to the API
-api.add_namespace(address_ns)
-api.add_namespace(service_ns)
-api.add_namespace(user_ns)
+# Import models and routes after the app and extensions have been initialized
+from .models import *
+from .routes import *
+
+from .auth import verify_password  # Importing auth-related functions
 
 from .schemas import AddressSchema, ServiceSchema, UserSchema # Import schemas
 
